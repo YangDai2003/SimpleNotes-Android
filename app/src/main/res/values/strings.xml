@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Simple Notes</string>
+    <string name="title">Title</string>
+    <string name="add_notes">Add content:</string>
+    <string name="content">Content</string>
+    <string name="date">Date</string>
+    <string name="search">Search</string>
+    <string name="pin_unpin">Pin/UnPin</string>
+    <string name="delete">Delete</string>
+    <string name="toadd">Please add some notes !</string>
+    <string name="deleted">Note has been deleted.</string>
+    <string name="cancel">Cancel</string>
+    <string name="sure">Are you sure you want to delete the note?</string>
+    <string name="info">Info</string>
+    <string name="About">Based on Room\nTry swiping left or right and long pressing</string>
+    <string name="create">"Creation date: "</string>
+    <string name="toast">This note has been pinned.</string>
+    <string name="confirm">confirm</string>
+    <string name="filter">Filter</string>
+    <string name="save">Save</string>
+    <string name="alarm">Remind</string>
+    <string name="note">Note</string>
+</resources>

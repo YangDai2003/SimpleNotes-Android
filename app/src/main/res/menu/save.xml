@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/song_detail_toolbar_menu_share"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_baseline_save_24"
+        app:showAsAction="ifRoom"
+        android:title="@string/save" />
+    <item
+        android:id="@+id/time"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/baseline_add_alarm_24"
+        android:title="@string/alarm"/>
+</menu>

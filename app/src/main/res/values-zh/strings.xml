@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">简记</string>
+    <string name="title">标题</string>
+    <string name="add_notes">正文:</string>
+    <string name="content">内容</string>
+    <string name="date">日期</string>
+    <string name="search">搜索</string>
+    <string name="pin_unpin">标定/取消标定</string>
+    <string name="delete">删除</string>
+    <string name="toadd">请添加笔记！</string>
+    <string name="deleted">笔记已删除。</string>
+    <string name="cancel">取消</string>
+    <string name="sure">确定要删除笔记吗?</string>
+    <string name="info">关于</string>
+    <string name="About">基于Room，简记，简单记录生活。\n试试左右滑动和长按。</string>
+    <string name="create">"创建于: "</string>
+    <string name="toast">笔记已标定。</string>
+    <string name="confirm">确定</string>
+    <string name="filter">筛选</string>
+    <string name="save">保存</string>
+    <string name="alarm">提醒</string>
+    <string name="note">笔记</string>
+</resources>
