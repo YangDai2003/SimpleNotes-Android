@@ -21,4 +21,5 @@
     <string name="save">Verwahren</string>
     <string name="alarm">Erinnern</string>
     <string name="note">Notiz</string>
+    <string name="add">Neue Notiz erstellen</string>
 </resources>

@@ -5,18 +5,18 @@ import static com.example.notesapp.FileUtils.deleteSingleFile;
 import static com.example.notesapp.FileUtils.getRealPathFromURI;
 import static com.example.notesapp.PermissionUtils.verifyStoragePermissions;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.core.app.ActivityOptionsCompat;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,12 +24,14 @@ import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.notesapp.Models.Notes;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.elevation.SurfaceColors;
@@ -46,16 +48,15 @@ public class NotesActivity extends AppCompatActivity {
     LinearLayout linearLayout;
     EditText editText_title, editText_notes;
     TextView textView_date;
-    ImageView imageButton, imageButton1;
+    ImageView imageButton;
     Notes notes;
-    String images = "";
-    String dateStr;
+    String images = "", dateStr;
     List<String> paths = new ArrayList<>();
     long id;
-    int imageId = 0;
+    int imageId = 0, getImageId = 0;
     boolean is_old_note = false;
     Uri uri;
-    ActivityResultLauncher<Intent> intentActivityResultLauncher;
+    ActivityResultLauncher<Intent> intentActivityResultLauncher, photoActivityResultLauncher;
 
     private void initView() {
         linearLayout = findViewById(R.id.linear);
@@ -63,7 +64,6 @@ public class NotesActivity extends AppCompatActivity {
         editText_title = findViewById(R.id.edit_text_title);
         editText_notes = findViewById(R.id.edit_text_notes);
         imageButton = findViewById(R.id.imageButton);
-        imageButton1 = findViewById(R.id.imageButton1);
     }
 
     private void initViewEvents() {
@@ -149,24 +149,47 @@ public class NotesActivity extends AppCompatActivity {
         initView();
         initViewEvents();
 
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                finish();
+            }
+        };
+        getOnBackPressedDispatcher().addCallback(this, callback);
+
+        photoActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == RESULT_OK) {
+                findViewById(getImageId).setTransitionName("");
+            }
+        });
+
         intentActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
             //此处是跳转的result回调方法
             new Thread(() -> {
                 Bitmap bitmap;
-                if (result.getData() != null && result.getResultCode() == Activity.RESULT_OK) {
+                if (result.getData() != null && result.getResultCode() == RESULT_OK) {
                     uri = result.getData().getData();
                     @SuppressLint("SimpleDateFormat") SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmssSSS");
                     Date date = new Date();
-                    String path = getRealPathFromURI(uri, this);
-                    bitmap = decodeSampledBitmap(path);
-                    paths.add(FileSaveToInside(this, format.format(date), bitmap));
+                    String realPathFromURI = getRealPathFromURI(uri, this);
+                    bitmap = decodeSampledBitmap(realPathFromURI);
+                    String path = FileSaveToInside(this, format.format(date), bitmap);
+                    paths.add(path);
                     runOnUiThread(() -> {
                         ImageView imageView = new ImageView(NotesActivity.this);
                         imageView.setId(imageId++);
-                        imageView.setLayoutParams(imageButton1.getLayoutParams());
-                        imageView.setImageBitmap(bitmap);
-                        imageView.setPadding(8, 0, 8, 0);
-                        imageView.setOnClickListener(v -> bigImageLoader(((BitmapDrawable) imageView.getDrawable()).getBitmap()));
+                        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(dpToPx(150), ViewGroup.LayoutParams.MATCH_PARENT);
+                        params.setMarginEnd(dpToPx(8));
+                        imageView.setLayoutParams(params);
+                        Glide.with(imageView).asBitmap().load(path).sizeMultiplier(0.8f).into(imageView);
+                        imageView.setOnClickListener(v -> {
+                            getImageId = imageView.getId();
+                            imageView.setTransitionName("testImg");
+                            Intent intent = new Intent(this, PhotoActivity.class);
+                            intent.putExtra("uri", path);
+                            photoActivityResultLauncher.launch(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(NotesActivity.this, imageView, "testImg"));
+                        });
                         imageView.setOnLongClickListener(v -> {
                             PopupMenu popupMenu = new PopupMenu(this, imageView);
                             popupMenu.setOnMenuItemClickListener(item -> {
@@ -183,7 +206,7 @@ public class NotesActivity extends AppCompatActivity {
                             popupMenu.show();
                             return false;
                         });
-                        linearLayout.addView(imageView, linearLayout.getChildCount() - 2);
+                        linearLayout.addView(imageView, linearLayout.getChildCount() - 1);
                     });
                 }
             }).start();
@@ -202,14 +225,21 @@ public class NotesActivity extends AppCompatActivity {
                 List<String> listArr = Arrays.asList(images.trim().split(" "));
                 paths = new ArrayList<>(listArr);
                 for (int i = 0; i < paths.size(); ++i) {
-                    Bitmap bitmap = BitmapFactory.decodeFile(paths.get(i));
                     ImageView imageView = new ImageView(NotesActivity.this);
                     imageView.setId(imageId++);
-                    //Glide.with(this).asBitmap().load(paths.get(i)).into(imageView);
-                    imageView.setLayoutParams(imageButton1.getLayoutParams());
-                    imageView.setImageBitmap(bitmap);
-                    imageView.setPadding(8, 0, 8, 0);
-                    imageView.setOnClickListener(v -> bigImageLoader(((BitmapDrawable) imageView.getDrawable()).getBitmap()));
+                    Glide.with(imageView).asBitmap().load(paths.get(i)).sizeMultiplier(0.8f).into(imageView);
+                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(dpToPx(150), ViewGroup.LayoutParams.MATCH_PARENT);
+                    params.setMarginEnd(dpToPx(8));
+                    imageView.setLayoutParams(params);
+                    int finalI = i;
+                    imageView.setOnClickListener(v -> {
+                        getImageId = imageView.getId();
+                        imageView.setTransitionName("testImg");
+                        Intent intent = new Intent(this, PhotoActivity.class);
+                        intent.putExtra("uri", paths.get(finalI));
+                        photoActivityResultLauncher.launch(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(NotesActivity.this, imageView, "testImg"));
+                    });
                     imageView.setOnLongClickListener(v -> {
                         PopupMenu popupMenu = new PopupMenu(this, imageView);
                         popupMenu.setOnMenuItemClickListener(item -> {
@@ -226,7 +256,7 @@ public class NotesActivity extends AppCompatActivity {
                         popupMenu.show();
                         return false;
                     });
-                    linearLayout.addView(imageView, linearLayout.getChildCount() - 2);
+                    linearLayout.addView(imageView, linearLayout.getChildCount() - 1);
                 }
             }
             id = notes.getID();
@@ -275,13 +305,8 @@ public class NotesActivity extends AppCompatActivity {
         return inSampleSize;
     }
 
-    private void bigImageLoader(Bitmap bitmap) {
-        final Dialog dialog = new Dialog(this);
-        ImageView image = new ImageView(this);
-        image.setImageBitmap(bitmap);
-        dialog.setContentView(image);
-        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        dialog.show();
-        image.setOnClickListener(v -> dialog.cancel());
+    private int dpToPx(int dp) {
+        float density = getResources().getDisplayMetrics().density;
+        return Math.round(dp * density);
     }
 }

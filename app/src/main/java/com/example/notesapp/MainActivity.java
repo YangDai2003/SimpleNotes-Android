@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -28,6 +27,7 @@ import com.example.notesapp.Adapters.NotesListAdapter;
 import com.example.notesapp.DataBase.RoomDB;
 import com.example.notesapp.Models.Notes;
 import com.google.android.material.color.DynamicColors;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.elevation.SurfaceColors;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -58,13 +58,12 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.song_detail_toolbar_menu_info) {
-            AlertDialog alertDialog1 = new AlertDialog.Builder(this)
+            new MaterialAlertDialogBuilder(this)
                     .setTitle(getString(R.string.info))//标题
                     .setMessage(getString(R.string.About))//内容
                     .setIcon(R.mipmap.ic_launcher)//图标
                     .setCancelable(true)
-                    .create();
-            alertDialog1.show();
+                    .show();
         } else if (item.getItemId() == R.id.filter_menu) {
             if (!filter) {
                 filterPin();
@@ -185,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         @Override
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
             int position = viewHolder.getAdapterPosition();
-            AlertDialog alertDialog1 = new AlertDialog.Builder(MainActivity.this)
+            new MaterialAlertDialogBuilder(MainActivity.this)
                     .setTitle(getString(R.string.delete))//标题
                     .setMessage(getString(R.string.sure))//内容
                     .setIcon(R.mipmap.ic_launcher)//图标
@@ -201,8 +200,7 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
                         notesListAdapter.notifyItemRemoved(position);
                         Toast.makeText(MainActivity.this, getString(R.string.deleted), Toast.LENGTH_SHORT).show();
                     })
-                    .create();
-            alertDialog1.show();
+                    .show();
         }
     });
 
@@ -283,7 +281,7 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
             if (selected_notes.isPinned()) {
                 Toast.makeText(MainActivity.this, getString(R.string.toast), Toast.LENGTH_SHORT).show();
             } else {
-                AlertDialog alertDialog1 = new AlertDialog.Builder(this)
+                new MaterialAlertDialogBuilder(this)
                         .setTitle(getString(R.string.delete))//标题
                         .setMessage(getString(R.string.sure))//内容
                         .setIcon(R.mipmap.ic_launcher)//图标
@@ -301,8 +299,7 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
                             notesListAdapter.notifyItemRemoved(mPosition);
                             Toast.makeText(this, getString(R.string.deleted), Toast.LENGTH_SHORT).show();
                         })
-                        .create();
-                alertDialog1.show();
+                        .show();
             }
             return true;
         }

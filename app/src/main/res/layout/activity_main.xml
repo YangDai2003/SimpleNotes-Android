@@ -36,7 +36,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:paddingHorizontal="8dp"
             android:layout_marginHorizontal="8dp"
             android:layoutAnimation="@anim/anim_layout"
@@ -50,6 +50,6 @@
         android:layout_gravity="end|bottom"
         android:layout_margin="25dp"
         android:src="@drawable/ic_baseline_add_24"
-        android:importantForAccessibility="no" />
+        android:contentDescription="@string/add" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

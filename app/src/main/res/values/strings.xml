@@ -20,4 +20,5 @@
     <string name="save">Save</string>
     <string name="alarm">Remind</string>
     <string name="note">Note</string>
+    <string name="add">Create new note</string>
 </resources>
