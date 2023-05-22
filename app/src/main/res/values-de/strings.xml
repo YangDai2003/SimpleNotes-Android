@@ -2,17 +2,17 @@
 <resources>
     <string name="app_name">Memo Leicht</string>
     <string name="title">Titel</string>
-    <string name="add_notes">Inhalt hinzufügen:</string>
+    <string name="add_notes">Inhalt:</string>
     <string name="content">Inhalt</string>
     <string name="date">Datum</string>
     <string name="search">Durchsuchen</string>
     <string name="pin_unpin">Pin/UnPin</string>
     <string name="delete">Entfernen</string>
-    <string name="toadd">Bitte fügen Sie einige Notizen hinzu !</string>
+    <string name="toAdd">Bitte fügen Sie einige Notizen hinzu !</string>
     <string name="deleted">Notiz wurde gelöscht.</string>
     <string name="cancel">absagen</string>
     <string name="sure">Möchten Sie die Notiz wirklich löschen?</string>
-    <string name="info">Info</string>
+    <string name="info">Aufstellung</string>
     <string name="About">Basiert auf Room.\nVersuchen Sie, nach links oder rechts zu wischen und lange zu drücken.</string>
     <string name="create">"Erstellungsdatum: "</string>
     <string name="toast">"Bitte unpin zuerst. "</string>
@@ -22,4 +22,7 @@
     <string name="alarm">Erinnern</string>
     <string name="note">Notiz</string>
     <string name="add">Neue Notiz erstellen</string>
+    <string name="login">Anmelden</string>
+    <string name="usePassword">Sperrbildschirm-Passwort verwenden</string>
+    <string name="noPassword">kein Passwort</string>
 </resources>

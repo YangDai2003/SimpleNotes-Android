@@ -8,5 +8,4 @@ public interface NotesClick {
     void onClick(Notes notes, int position);
 
     void onLongClick(Notes notes, CardView cardView, int position);
-
 }

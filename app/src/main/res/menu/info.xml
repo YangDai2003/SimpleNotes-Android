@@ -12,7 +12,7 @@
     <item
         android:id="@+id/song_detail_toolbar_menu_info"
         android:orderInCategory="100"
-        android:icon="@drawable/baseline_info_24"
+        android:icon="@drawable/baseline_settings_24"
         app:showAsAction="ifRoom"
         android:title="@string/info" />
 

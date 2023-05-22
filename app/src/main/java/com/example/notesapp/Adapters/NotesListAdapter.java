@@ -24,32 +24,30 @@ import java.util.List;
 import java.util.Random;
 
 public class NotesListAdapter extends RecyclerView.Adapter<NotesListAdapter.NotesViewHolder> {
-    List<Notes> list;
+    private List<Notes> list;
     NotesClick notesClick;
-    boolean scrollup = false;
+    boolean scrollUp = false;
 
     public NotesListAdapter(List<Notes> list, NotesClick notesClick) {
         this.list = list;
         this.notesClick = notesClick;
     }
 
-    public void setScrollup(boolean scroll) {
-        scrollup = scroll;
+    public void setScrollUp(boolean scroll) {
+        scrollUp = scroll;
     }
 
     @Override
     public void onViewAttachedToWindow(@NonNull NotesViewHolder holder) {
         super.onViewAttachedToWindow(holder);
-        if (scrollup) {
+        if (scrollUp) {
             addAnimation(holder);
         }
-        scrollup = false;
     }
 
     private void addAnimation(NotesViewHolder holder) {
         holder.itemView.setAnimation(AnimationUtils.loadAnimation(holder.itemView.getContext(), R.anim.item_anim));
     }
-
 
     @NonNull
     @Override
@@ -81,7 +79,6 @@ public class NotesListAdapter extends RecyclerView.Adapter<NotesListAdapter.Note
         if (!images.isEmpty()) {
             List<String> paths = Arrays.asList(images.trim().split(" "));
             Glide.with(holder.itemView.getContext()).load(paths.get(0)).sizeMultiplier(0.65f).diskCacheStrategy(DiskCacheStrategy.NONE).into(holder.imageView);
-            //holder.imageView.setImageBitmap(decodeSampledBitmap(paths.get(0), 100, 100));
         } else {
             Glide.with(holder.itemView.getContext()).clear(holder.imageView);
         }

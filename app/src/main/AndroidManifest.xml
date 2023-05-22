@@ -10,6 +10,7 @@
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="29"
         tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
 
     <application
         android:allowBackup="true"
@@ -23,17 +24,25 @@
         android:theme="@style/AppTheme"
         tools:targetApi="tiramisu">
         <activity
+            android:name=".SettingsActivity"
+            android:exported="false" />
+        <activity
             android:name=".PhotoActivity"
             android:exported="false"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".NotesActivity"
             android:exported="false"
             android:label="@string/note" />
         <activity
             android:name=".MainActivity"
+            android:exported="false"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".LoginActivity"
             android:exported="true"
-            android:launchMode="singleTask">
+            android:launchMode="singleInstancePerTask"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

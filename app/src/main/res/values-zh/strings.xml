@@ -8,11 +8,11 @@
     <string name="search">搜索</string>
     <string name="pin_unpin">标定/取消标定</string>
     <string name="delete">删除</string>
-    <string name="toadd">请添加笔记！</string>
+    <string name="toAdd">请添加笔记！</string>
     <string name="deleted">笔记已删除。</string>
     <string name="cancel">取消</string>
     <string name="sure">确定要删除笔记吗?</string>
-    <string name="info">关于</string>
+    <string name="info">设置</string>
     <string name="About">基于Room，简记，简单记录生活。\n试试左右滑动和长按。</string>
     <string name="create">"创建于: "</string>
     <string name="toast">笔记已标定。</string>
@@ -22,4 +22,7 @@
     <string name="alarm">提醒</string>
     <string name="note">笔记</string>
     <string name="add">创建新笔记</string>
+    <string name="login">登录</string>
+    <string name="usePassword">使用系统锁屏密码</string>
+    <string name="noPassword">不使用密码</string>
 </resources>

@@ -4,13 +4,14 @@ plugins {
 
 android {
     namespace 'com.example.notesapp'
+    compileSdk 33
 
     defaultConfig {
         applicationId 'com.yangdai.notesapp'
-        minSdk 28
+        minSdk 29
         targetSdk 33
-        versionCode 4
-        versionName "4.0"
+        versionCode 8
+        versionName "8.0"
         resourceConfigurations += ["en", "de", "zh"]
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -21,14 +22,17 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
-    compileSdk 33
 }
 
 dependencies {
+    implementation 'com.github.ybq:Android-SpinKit:1.4.0'
+
+    implementation "androidx.biometric:biometric:1.1.0"
 
     implementation 'com.github.chrisbanes:PhotoView:2.0.0'
 
@@ -40,19 +44,11 @@ dependencies {
     def room_version = "2.5.1"
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
-    // optional - RxJava2 support for Room
-    implementation "androidx.room:room-rxjava2:$room_version"
-    // optional - RxJava3 support for Room
-    implementation "androidx.room:room-rxjava3:$room_version"
-    // optional - Guava support for Room, including Optional and ListenableFuture
-    implementation "androidx.room:room-guava:$room_version"
-    // optional - Paging 3 Integration
-    implementation "androidx.room:room-paging:$room_version"
 
-    implementation(platform('org.jetbrains.kotlin:kotlin-bom:1.8.20'))
-    implementation 'androidx.compose.material3:material3:1.1.0-rc01'
+    implementation(platform('org.jetbrains.kotlin:kotlin-bom:1.8.21'))
+    implementation 'androidx.compose.material3:material3:1.2.0-alpha01'
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'com.google.android.material:material:1.9.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

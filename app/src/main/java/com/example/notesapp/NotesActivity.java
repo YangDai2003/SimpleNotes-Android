@@ -3,6 +3,8 @@ package com.example.notesapp;
 import static com.example.notesapp.FileUtils.FileSaveToInside;
 import static com.example.notesapp.FileUtils.deleteSingleFile;
 import static com.example.notesapp.FileUtils.getRealPathFromURI;
+import static com.example.notesapp.FileUtils.readPictureDegree;
+import static com.example.notesapp.FileUtils.toTurn;
 import static com.example.notesapp.PermissionUtils.verifyStoragePermissions;
 
 import androidx.activity.OnBackPressedCallback;
@@ -36,26 +38,24 @@ import com.example.notesapp.Models.Notes;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.elevation.SurfaceColors;
 
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
 public class NotesActivity extends AppCompatActivity {
-
     LinearLayout linearLayout;
     EditText editText_title, editText_notes;
     TextView textView_date;
     ImageView imageButton;
-    Notes notes;
+    private Notes notes;
     String images = "", dateStr;
-    List<String> paths = new ArrayList<>();
-    long id;
-    int imageId = 0, getImageId = 0;
-    boolean is_old_note = false;
-    Uri uri;
+    private List<String> paths = new ArrayList<>();
+    private int imageId = 0, getImageId = 0;
+    private boolean is_old_note = false;
+    private Uri uri;
     ActivityResultLauncher<Intent> intentActivityResultLauncher, photoActivityResultLauncher;
 
     private void initView() {
@@ -97,11 +97,11 @@ public class NotesActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.song_detail_toolbar_menu_share) {
+        if (item.getItemId() == R.id.save_note) {
             String title = editText_title.getText().toString();
             String description = editText_notes.getText().toString();
             if (description.isEmpty()) {
-                Toast.makeText(NotesActivity.this, getString(R.string.toadd), Toast.LENGTH_SHORT).show();
+                Toast.makeText(NotesActivity.this, getString(R.string.toAdd), Toast.LENGTH_SHORT).show();
                 return false;
             }
             notes.setTitle(title);
@@ -169,17 +169,16 @@ public class NotesActivity extends AppCompatActivity {
                 Bitmap bitmap;
                 if (result.getData() != null && result.getResultCode() == RESULT_OK) {
                     uri = result.getData().getData();
-                    @SuppressLint("SimpleDateFormat") SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-                    Date date = new Date();
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
                     String realPathFromURI = getRealPathFromURI(uri, this);
-                    bitmap = decodeSampledBitmap(realPathFromURI);
-                    String path = FileSaveToInside(this, format.format(date), bitmap);
+                    bitmap = toTurn(decodeSampledBitmap(realPathFromURI), readPictureDegree(realPathFromURI));
+                    String path = FileSaveToInside(this, formatter.format(LocalDateTime.now()), bitmap);
                     paths.add(path);
                     runOnUiThread(() -> {
                         ImageView imageView = new ImageView(NotesActivity.this);
                         imageView.setId(imageId++);
                         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(dpToPx(150), ViewGroup.LayoutParams.MATCH_PARENT);
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(dpToPx(180), ViewGroup.LayoutParams.MATCH_PARENT);
                         params.setMarginEnd(dpToPx(8));
                         imageView.setLayoutParams(params);
                         Glide.with(imageView).asBitmap().load(path).sizeMultiplier(0.8f).into(imageView);
@@ -229,7 +228,7 @@ public class NotesActivity extends AppCompatActivity {
                     imageView.setId(imageId++);
                     Glide.with(imageView).asBitmap().load(paths.get(i)).sizeMultiplier(0.8f).into(imageView);
                     imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(dpToPx(150), ViewGroup.LayoutParams.MATCH_PARENT);
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(dpToPx(180), ViewGroup.LayoutParams.MATCH_PARENT);
                     params.setMarginEnd(dpToPx(8));
                     imageView.setLayoutParams(params);
                     int finalI = i;
@@ -259,12 +258,10 @@ public class NotesActivity extends AppCompatActivity {
                     linearLayout.addView(imageView, linearLayout.getChildCount() - 1);
                 }
             }
-            id = notes.getID();
         } else {
             is_old_note = false;
-            @SuppressLint("SimpleDateFormat") SimpleDateFormat format = new SimpleDateFormat("EEE, yyyy-MM-dd hh:mm a");
-            Date date = new Date();
-            dateStr = format.format(date);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, yyyy-MM-dd hh:mm a");
+            dateStr = formatter.format(LocalDateTime.now());
             textView_date.setText(getString(R.string.create) + dateStr);
         }
     }

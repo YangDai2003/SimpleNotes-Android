@@ -16,6 +16,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,11 +30,12 @@ import com.example.notesapp.Models.Notes;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.elevation.SurfaceColors;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
 
@@ -41,13 +43,15 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
     RecyclerView recyclerView;
     NotesListAdapter notesListAdapter;
     SwipeRefreshLayout swipeRefreshLayout;
-    List<Notes> notes = new ArrayList<>();
+    private List<Notes> notes = new ArrayList<>();
     RoomDB database;
-    FloatingActionButton fab_btn;
+    ExtendedFloatingActionButton fab_btn;
     SearchView searchView;
-    Notes selected_notes;
-    int mPosition;
-    boolean filter = false;
+    private Notes selected_notes;
+    private int mPosition;
+    private boolean filter = false;
+    SharedPreferences sharedPreferences;
+    StaggeredGridLayoutManager layoutManager;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -58,11 +62,20 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.song_detail_toolbar_menu_info) {
+            CharSequence[] charSequences = new CharSequence[]{getString(R.string.noPassword), getString(R.string.usePassword)};
+            boolean usePass = sharedPreferences.getBoolean("usePassword", false);
+            final int[] itemCheck = {0};
+            if (usePass) itemCheck[0] = 1;
             new MaterialAlertDialogBuilder(this)
                     .setTitle(getString(R.string.info))//标题
-                    .setMessage(getString(R.string.About))//内容
+//                    .setMessage(getString(R.string.About))//内容
                     .setIcon(R.mipmap.ic_launcher)//图标
-                    .setCancelable(true)
+                    .setSingleChoiceItems(charSequences, itemCheck[0], (dialog, which) -> itemCheck[0] = which)
+                    .setPositiveButton(getString(R.string.confirm), (dialog, which) -> {
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putBoolean("usePassword", itemCheck[0] == 1);
+                        editor.apply();
+                    })
                     .show();
         } else if (item.getItemId() == R.id.filter_menu) {
             if (!filter) {
@@ -84,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         DynamicColors.applyToActivityIfAvailable(this);
         getWindow().setStatusBarColor(SurfaceColors.SURFACE_2.getColor(this));
         setContentView(R.layout.activity_main);
+        sharedPreferences = getSharedPreferences("login", MODE_PRIVATE);
 
         swipeRefreshLayout = findViewById(R.id.refresh);
         recyclerView = findViewById(R.id.recycler_view);
@@ -100,12 +114,24 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                notesListAdapter.setScrollup(dy > 20);
-                if (dy > 1 || dy < -1) {
+                notesListAdapter.setScrollUp(dy > 10);
+                if (dy != 0) {
                     searchView.clearFocus();
                 }
             }
+
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (layoutManager != null) {
+                    int[] arr = layoutManager.findFirstVisibleItemPositions(null);
+                    List<Integer> list = Arrays.stream(arr).boxed().collect(Collectors.toList());
+                    if (list.contains(0)) fab_btn.extend();
+                    else fab_btn.shrink();
+                }
+            }
         });
+
         fab_btn.setOnClickListener(view -> {
             searchView.clearFocus();
             Intent intent = new Intent(this, NotesActivity.class);
@@ -228,7 +254,6 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
 
     private void updateRecycler(List<Notes> notes) {
         recyclerView.setHasFixedSize(true);
-        StaggeredGridLayoutManager layoutManager;
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         } else {
