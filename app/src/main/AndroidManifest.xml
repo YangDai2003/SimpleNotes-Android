@@ -25,7 +25,8 @@
         tools:targetApi="tiramisu">
         <activity
             android:name=".SettingsActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:label="@string/info"/>
         <activity
             android:name=".PhotoActivity"
             android:exported="false"

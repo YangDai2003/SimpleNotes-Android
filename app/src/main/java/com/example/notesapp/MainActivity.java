@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -39,7 +40,8 @@ import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
 
-    ActivityResultLauncher<Intent> intentActivityResultLauncher1, intentActivityResultLauncher2;
+    ActivityResultLauncher<Intent> intentActivityResultLauncher1, intentActivityResultLauncher2,
+    intentActivityResultLauncher;
     RecyclerView recyclerView;
     NotesListAdapter notesListAdapter;
     SwipeRefreshLayout swipeRefreshLayout;
@@ -62,21 +64,10 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.song_detail_toolbar_menu_info) {
-            CharSequence[] charSequences = new CharSequence[]{getString(R.string.noPassword), getString(R.string.usePassword)};
-            boolean usePass = sharedPreferences.getBoolean("usePassword", false);
-            final int[] itemCheck = {0};
-            if (usePass) itemCheck[0] = 1;
-            new MaterialAlertDialogBuilder(this)
-                    .setTitle(getString(R.string.info))//标题
-//                    .setMessage(getString(R.string.About))//内容
-                    .setIcon(R.mipmap.ic_launcher)//图标
-                    .setSingleChoiceItems(charSequences, itemCheck[0], (dialog, which) -> itemCheck[0] = which)
-                    .setPositiveButton(getString(R.string.confirm), (dialog, which) -> {
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putBoolean("usePassword", itemCheck[0] == 1);
-                        editor.apply();
-                    })
-                    .show();
+            searchView.clearFocus();
+            Intent intent = new Intent(this, SettingsActivity.class);
+            intentActivityResultLauncher.launch(intent);
+            MainActivity.this.overridePendingTransition(R.anim.in, R.anim.stay);
         } else if (item.getItemId() == R.id.filter_menu) {
             if (!filter) {
                 filterPin();
@@ -91,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         return super.onOptionsItemSelected(item);
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -149,6 +141,12 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
             public boolean onQueryTextChange(String newText) {
                 filterStr(newText);
                 return false;
+            }
+        });
+        intentActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), res -> {
+            if (res.getResultCode() == Activity.RESULT_OK) {
+                notes = database.dao().getAll();
+                updateRecycler(notes);
             }
         });
         //2点击note  1点击button

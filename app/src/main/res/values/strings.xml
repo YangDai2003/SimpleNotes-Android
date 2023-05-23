@@ -11,11 +11,11 @@
     <string name="deleted">Note has been deleted.</string>
     <string name="cancel">Cancel</string>
     <string name="sure">Are you sure you want to delete the note?</string>
-    <string name="info">Setting</string>
+    <string name="info">Settings</string>
     <string name="About">Based on Room\nTry swiping left or right and long pressing</string>
     <string name="create">"Creation date: "</string>
     <string name="toast">This note has been pinned.</string>
-    <string name="confirm">confirm</string>
+    <string name="confirm">Confirm</string>
     <string name="filter">Filter</string>
     <string name="save">Save</string>
     <string name="alarm">Remind</string>
@@ -24,4 +24,8 @@
     <string name="login">Login</string>
     <string name="usePassword">Use system lock screen password</string>
     <string name="noPassword">No password</string>
+    <string name="shareApp">Share this App</string>
+    <string name="rate">Rate this App</string>
+    <string name="deleteAll">Delete all notes</string>
+    <string name="shareContent">Get Simple Notes from Google Play now:\nhttps://play.google.com/store/apps/details?id=com.yangdai.notesapp</string>
 </resources>

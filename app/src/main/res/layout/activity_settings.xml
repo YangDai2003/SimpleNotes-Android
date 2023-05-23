@@ -7,16 +7,79 @@
     tools:context=".SettingsActivity">
 
     <com.google.android.material.materialswitch.MaterialSwitch
+        android:id="@+id/materialSwitch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="32dp"
-        android:text="使用密码锁定"
+        android:layout_marginTop="36dp"
         android:checked="false"
-        android:textOn="开"
+        android:text="@string/usePassword"
         android:textOff="关"
+        android:textOn="开"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/deleteAll"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/materialButton2"
+        app:layout_constraintStart_toStartOf="@+id/materialSwitch"
+        app:layout_constraintTop_toTopOf="@+id/materialButton2" />
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/materialButton2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:backgroundTint="?colorError"
+        android:text="@string/delete"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/materialSwitch"
+        app:layout_constraintTop_toBottomOf="@+id/materialSwitch" />
+
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/materialDivider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="36dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/materialButton2"
+        tools:layout_editor_absoluteX="36dp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/share"
+        style="@style/Widget.Material3.Button.TextButton.Dialog.Flush"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_gravity="center"
+        android:text="@string/shareApp"
+        android:textColor="?colorOnPrimaryContainer"
+        app:icon="@drawable/baseline_share_24"
+        app:iconGravity="textStart"
+        app:iconTint="?colorOnPrimaryContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/materialDivider" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/rate"
+        style="@style/Widget.Material3.Button.TextButton.Dialog.Flush"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_gravity="center"
+        android:text="@string/rate"
+        android:textColor="?colorOnPrimaryContainer"
+        app:icon="@drawable/baseline_rate_review_24"
+        app:iconGravity="textStart"
+        app:iconTint="?colorOnPrimaryContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/share" />
 </androidx.constraintlayout.widget.ConstraintLayout>

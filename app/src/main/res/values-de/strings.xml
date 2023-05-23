@@ -12,7 +12,7 @@
     <string name="deleted">Notiz wurde gelöscht.</string>
     <string name="cancel">absagen</string>
     <string name="sure">Möchten Sie die Notiz wirklich löschen?</string>
-    <string name="info">Aufstellung</string>
+    <string name="info">Aufstellungen</string>
     <string name="About">Basiert auf Room.\nVersuchen Sie, nach links oder rechts zu wischen und lange zu drücken.</string>
     <string name="create">"Erstellungsdatum: "</string>
     <string name="toast">"Bitte unpin zuerst. "</string>
@@ -25,4 +25,8 @@
     <string name="login">Anmelden</string>
     <string name="usePassword">Sperrbildschirm-Passwort verwenden</string>
     <string name="noPassword">kein Passwort</string>
+    <string name="shareApp">Diese App teilen</string>
+    <string name="rate">Diese App bewerten</string>
+    <string name="deleteAll">Alle Notizen löschen</string>
+    <string name="shareContent">Laden Sie jetzt den Memo Leicht von Google Play herunter:\nhttps://play.google.com/store/apps/details?id=com.yangdai.notesapp</string>
 </resources>

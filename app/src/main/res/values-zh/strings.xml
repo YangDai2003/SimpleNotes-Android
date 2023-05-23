@@ -25,4 +25,8 @@
     <string name="login">登录</string>
     <string name="usePassword">使用系统锁屏密码</string>
     <string name="noPassword">不使用密码</string>
+    <string name="shareApp">分享此应用</string>
+    <string name="rate">给应用打分</string>
+    <string name="deleteAll">删除所有笔记</string>
+    <string name="shareContent">快从谷歌商店下载简记吧:\nhttps://play.google.com/store/apps/details?id=com.yangdai.notesapp</string>
 </resources>
