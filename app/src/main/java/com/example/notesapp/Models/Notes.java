@@ -6,6 +6,9 @@ import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
 
+/**
+ * @author 30415
+ */
 @Entity(tableName = "notes")
 public class Notes implements Serializable {
     @PrimaryKey(autoGenerate = true)

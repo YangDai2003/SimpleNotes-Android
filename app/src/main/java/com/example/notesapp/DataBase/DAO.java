@@ -12,6 +12,9 @@ import com.example.notesapp.Models.Notes;
 
 import java.util.List;
 
+/**
+ * @author 30415
+ */
 @Dao
 public interface DAO {
 

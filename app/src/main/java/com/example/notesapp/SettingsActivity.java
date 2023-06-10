@@ -47,11 +47,13 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
         SharedPreferences sharedPreferences = getSharedPreferences("login", MODE_PRIVATE);
 
+
         materialSwitch = findViewById(R.id.materialSwitch);
         deleteAll = findViewById(R.id.materialButton2);
         share = findViewById(R.id.share);
         rate = findViewById(R.id.rate);
 
+        materialSwitch.setChecked(sharedPreferences.getBoolean("usePassword", false));
         materialSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putBoolean("usePassword", isChecked);
@@ -92,9 +94,11 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     void deleteRecursive(File fileOrDirectory) {
-        if (fileOrDirectory.exists() && fileOrDirectory.isDirectory())
-            for (File child : Objects.requireNonNull(fileOrDirectory.listFiles()))
+        if (fileOrDirectory.exists() && fileOrDirectory.isDirectory()) {
+            for (File child : Objects.requireNonNull(fileOrDirectory.listFiles())) {
                 deleteRecursive(child);
+            }
+        }
         fileOrDirectory.delete();
     }
 }

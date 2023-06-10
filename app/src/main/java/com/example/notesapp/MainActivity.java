@@ -21,6 +21,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -38,6 +39,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * @author 30415
+ */
 public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
 
     ActivityResultLauncher<Intent> intentActivityResultLauncher1, intentActivityResultLauncher2,
@@ -47,9 +51,9 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
     SwipeRefreshLayout swipeRefreshLayout;
     private List<Notes> notes = new ArrayList<>();
     RoomDB database;
-    ExtendedFloatingActionButton fab_btn;
+    ExtendedFloatingActionButton extendedFloatingActionButton;
     SearchView searchView;
-    private Notes selected_notes;
+    private Notes selectedNotes;
     private int mPosition;
     private boolean filter = false;
     SharedPreferences sharedPreferences;
@@ -74,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
                 filter = true;
                 item.setIcon(R.drawable.baseline_filter_list_off_24);
             } else {
-                notesListAdapter.filtered_list(notes);
+                notesListAdapter.filteredList(notes);
                 filter = false;
                 item.setIcon(R.drawable.baseline_filter_list_24);
             }
@@ -93,10 +97,12 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
 
         swipeRefreshLayout = findViewById(R.id.refresh);
         recyclerView = findViewById(R.id.recycler_view);
-        fab_btn = findViewById(R.id.fab_add_btn);
+        extendedFloatingActionButton = findViewById(R.id.fab_add_btn);
         searchView = findViewById(R.id.search_view);
 
         swipeRefreshLayout.setOnRefreshListener(this::onRefresh);
+        swipeRefreshLayout.setDistanceToTriggerSync((int) (getResources().getDisplayMetrics().density * 200));
+        swipeRefreshLayout.setProgressViewEndTarget(true, 400);
         itemTouchHelper.attachToRecyclerView(recyclerView);
         database = RoomDB.getInstance(this);
         notes = database.dao().getAll();
@@ -118,13 +124,16 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
                 if (layoutManager != null) {
                     int[] arr = layoutManager.findFirstVisibleItemPositions(null);
                     List<Integer> list = Arrays.stream(arr).boxed().collect(Collectors.toList());
-                    if (list.contains(0)) fab_btn.extend();
-                    else fab_btn.shrink();
+                    if (list.contains(0) || notes.isEmpty()) {
+                        extendedFloatingActionButton.extend();
+                    } else {
+                        extendedFloatingActionButton.shrink();
+                    }
                 }
             }
         });
 
-        fab_btn.setOnClickListener(view -> {
+        extendedFloatingActionButton.setOnClickListener(view -> {
             searchView.clearFocus();
             Intent intent = new Intent(this, NotesActivity.class);
             intentActivityResultLauncher1.launch(intent);
@@ -152,26 +161,26 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         //2点击note  1点击button
         intentActivityResultLauncher1 = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), res -> {
             if (res.getResultCode() == Activity.RESULT_OK) {
-                Notes new_notes = null;
+                Notes newNotes = null;
                 if (res.getData() != null) {
-                    new_notes = (Notes) res.getData().getSerializableExtra("note");
+                    newNotes = (Notes) res.getData().getSerializableExtra("note");
                 }
-                long id = database.dao().insert(new_notes);
-                if (new_notes != null) {
-                    new_notes.setID(id);
+                long id = database.dao().insert(newNotes);
+                if (newNotes != null) {
+                    newNotes.setID(id);
                 }
-                notes.add(0, new_notes);
+                notes.add(0, newNotes);
                 notesListAdapter.notifyItemInserted(0);
             }
         });
         intentActivityResultLauncher2 = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), res -> {
             if (res.getResultCode() == Activity.RESULT_OK) {
-                Notes new_notes = null;
+                Notes newNotes = null;
                 if (res.getData() != null) {
-                    new_notes = (Notes) res.getData().getSerializableExtra("note");
+                    newNotes = (Notes) res.getData().getSerializableExtra("note");
                 }
-                if (new_notes != null) {
-                    database.dao().update(new_notes);
+                if (newNotes != null) {
+                    database.dao().update(newNotes);
                 }
                 notes.clear();
                 notes.addAll(database.dao().getAll());
@@ -181,7 +190,7 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
     }
 
     protected void onRefresh() {//刷新
-        new Handler().postDelayed(() -> {
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
             notes = database.dao().getAll();
             updateRecycler(notes);
             swipeRefreshLayout.setRefreshing(false);//刷新旋转动画停止
@@ -230,14 +239,14 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
 
 
     private void filterStr(String newText) {
-        List<Notes> filter_list = new ArrayList<>();
+        List<Notes> filterList = new ArrayList<>();
         for (Notes single_notes : notes) {
             if (single_notes.getTitle().toLowerCase().contains(newText.toLowerCase())
                     || single_notes.getNotes().toLowerCase().contains(newText.toLowerCase())) {
-                filter_list.add(single_notes);
+                filterList.add(single_notes);
             }
         }
-        notesListAdapter.filtered_list(filter_list);
+        notesListAdapter.filteredList(filterList);
     }
 
     private void filterPin() {
@@ -247,7 +256,7 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
                 filter_list.add(single_notes);
             }
         }
-        notesListAdapter.filtered_list(filter_list);
+        notesListAdapter.filteredList(filter_list);
     }
 
     private void updateRecycler(List<Notes> notes) {
@@ -277,7 +286,7 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         @Override
         public void onLongClick(Notes notes, CardView cardView, int position) {
             searchView.clearFocus();
-            selected_notes = notes;
+            selectedNotes = notes;
             mPosition = position;
             showPopup(cardView);
         }
@@ -293,15 +302,15 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         if (item.getItemId() == R.id.pin) {
-            database.dao().pin(selected_notes.getID(), !selected_notes.isPinned());
-            int idx = notes.indexOf(selected_notes);
-            notes.remove(selected_notes);
-            selected_notes.setPinned(!selected_notes.isPinned());
-            notes.add(idx, selected_notes);
+            database.dao().pin(selectedNotes.getID(), !selectedNotes.isPinned());
+            int idx = notes.indexOf(selectedNotes);
+            notes.remove(selectedNotes);
+            selectedNotes.setPinned(!selectedNotes.isPinned());
+            notes.add(idx, selectedNotes);
             notesListAdapter.notifyItemChanged(mPosition);
             return true;
         } else if (item.getItemId() == R.id.del) {
-            if (selected_notes.isPinned()) {
+            if (selectedNotes.isPinned()) {
                 Toast.makeText(MainActivity.this, getString(R.string.toast), Toast.LENGTH_SHORT).show();
             } else {
                 new MaterialAlertDialogBuilder(this)
@@ -313,12 +322,12 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
 
                         })
                         .setPositiveButton(getString(R.string.delete), (dialog, which) -> {
-                            database.dao().delete(selected_notes);
-                            List<String> paths = Arrays.asList(selected_notes.getImage().trim().split(" "));
+                            database.dao().delete(selectedNotes);
+                            List<String> paths = Arrays.asList(selectedNotes.getImage().trim().split(" "));
                             for (int i = 0; i < paths.size(); ++i) {
                                 deleteSingleFile(paths.get(i));
                             }
-                            notes.remove(selected_notes);
+                            notes.remove(selectedNotes);
                             notesListAdapter.notifyItemRemoved(mPosition);
                             Toast.makeText(this, getString(R.string.deleted), Toast.LENGTH_SHORT).show();
                         })

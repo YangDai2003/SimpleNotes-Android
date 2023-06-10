@@ -6,6 +6,7 @@ import android.hardware.biometrics.BiometricPrompt;
 import android.os.Bundle;
 import android.os.CancellationSignal;
 import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,6 +18,9 @@ import com.google.android.material.color.DynamicColors;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+/**
+ * @author 30415
+ */
 public class LoginActivity extends AppCompatActivity {
     private final Executor executor = Executors.newSingleThreadExecutor();
     SpinKitView spinKitView;
@@ -31,7 +35,7 @@ public class LoginActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("login", MODE_PRIVATE);
         if (!sharedPreferences.getBoolean("usePassword", false)) {
             spinKitView.setVisibility(View.VISIBLE);
-            new Handler().postDelayed(() -> {
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
                 LoginActivity.this.finish();
@@ -47,7 +51,6 @@ public class LoginActivity extends AppCompatActivity {
         BiometricPrompt biometricPrompt = new BiometricPrompt.Builder(this)
                 .setTitle(getString(R.string.login))
                 .setConfirmationRequired(false)
-                .setDeviceCredentialAllowed(true)
                 .build();
         biometricPrompt.authenticate(new CancellationSignal(), executor, new BiometricPrompt.AuthenticationCallback() {
             @Override

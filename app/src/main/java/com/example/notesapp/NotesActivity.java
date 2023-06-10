@@ -1,6 +1,6 @@
 package com.example.notesapp;
 
-import static com.example.notesapp.FileUtils.FileSaveToInside;
+import static com.example.notesapp.FileUtils.fileSaveToInside;
 import static com.example.notesapp.FileUtils.deleteSingleFile;
 import static com.example.notesapp.FileUtils.getRealPathFromURI;
 import static com.example.notesapp.FileUtils.readPictureDegree;
@@ -24,10 +24,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -37,6 +40,7 @@ import com.bumptech.glide.Glide;
 import com.example.notesapp.Models.Notes;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.elevation.SurfaceColors;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -47,9 +51,10 @@ import java.util.Objects;
 
 public class NotesActivity extends AppCompatActivity {
     LinearLayout linearLayout;
+    HorizontalScrollView scrollView;
     EditText editText_title, editText_notes;
     TextView textView_date;
-    ImageView imageButton;
+    FloatingActionButton imageButton;
     private Notes notes;
     String images = "", dateStr;
     private List<String> paths = new ArrayList<>();
@@ -59,6 +64,7 @@ public class NotesActivity extends AppCompatActivity {
     ActivityResultLauncher<Intent> intentActivityResultLauncher, photoActivityResultLauncher;
 
     private void initView() {
+        scrollView = findViewById(R.id.horizontalScrollView);
         linearLayout = findViewById(R.id.linear);
         textView_date = findViewById(R.id.date);
         editText_title = findViewById(R.id.edit_text_title);
@@ -172,9 +178,12 @@ public class NotesActivity extends AppCompatActivity {
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
                     String realPathFromURI = getRealPathFromURI(uri, this);
                     bitmap = toTurn(decodeSampledBitmap(realPathFromURI), readPictureDegree(realPathFromURI));
-                    String path = FileSaveToInside(this, formatter.format(LocalDateTime.now()), bitmap);
+                    String path = fileSaveToInside(this, formatter.format(LocalDateTime.now()), bitmap);
                     paths.add(path);
                     runOnUiThread(() -> {
+                        if (scrollView.getVisibility() == View.GONE) {
+                            scrollView.setVisibility(View.VISIBLE);
+                        }
                         ImageView imageView = new ImageView(NotesActivity.this);
                         imageView.setId(imageId++);
                         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -197,6 +206,9 @@ public class NotesActivity extends AppCompatActivity {
                                     linearLayout.removeView(imageView);
                                     deleteSingleFile(paths.get(id));
                                     paths.remove(id);
+                                    if (paths.isEmpty()) {
+                                        scrollView.setVisibility(View.GONE);
+                                    }
                                     return true;
                                 }
                                 return false;
@@ -205,7 +217,7 @@ public class NotesActivity extends AppCompatActivity {
                             popupMenu.show();
                             return false;
                         });
-                        linearLayout.addView(imageView, linearLayout.getChildCount() - 1);
+                        linearLayout.addView(imageView, linearLayout.getChildCount());
                     });
                 }
             }).start();
@@ -247,6 +259,9 @@ public class NotesActivity extends AppCompatActivity {
                                 linearLayout.removeViewAt(id);
                                 deleteSingleFile(paths.get(id));
                                 paths.remove(id);
+                                if (paths.isEmpty()) {
+                                    scrollView.setVisibility(View.GONE);
+                                }
                                 return true;
                             }
                             return false;
@@ -255,14 +270,17 @@ public class NotesActivity extends AppCompatActivity {
                         popupMenu.show();
                         return false;
                     });
-                    linearLayout.addView(imageView, linearLayout.getChildCount() - 1);
+                    linearLayout.addView(imageView, linearLayout.getChildCount());
                 }
+            } else {
+                scrollView.setVisibility(View.GONE);
             }
         } else {
             is_old_note = false;
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, yyyy-MM-dd hh:mm a");
             dateStr = formatter.format(LocalDateTime.now());
             textView_date.setText(getString(R.string.create) + dateStr);
+            scrollView.setVisibility(View.GONE);
         }
     }
 
@@ -274,7 +292,14 @@ public class NotesActivity extends AppCompatActivity {
         BitmapFactory.decodeFile(path, options);
         // Calculate inSampleSize
         DisplayMetrics metric = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metric);
+        Display display;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            display = this.getDisplay();
+            display.getRealMetrics(metric);
+        } else {
+            display = getWindowManager().getDefaultDisplay();
+            display.getMetrics(metric);
+        }
         int width = metric.widthPixels;     // 屏幕宽度（像素）
         int height = metric.heightPixels;   // 屏幕高度（像素）
         options.inSampleSize = calculateInSampleSize(options, width, height);
