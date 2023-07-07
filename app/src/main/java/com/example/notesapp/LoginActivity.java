@@ -2,6 +2,7 @@ package com.example.notesapp;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.hardware.biometrics.BiometricManager;
 import android.hardware.biometrics.BiometricPrompt;
 import android.os.Bundle;
 import android.os.CancellationSignal;
@@ -48,18 +49,30 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void biometricLogin() {
-        BiometricPrompt biometricPrompt = new BiometricPrompt.Builder(this)
-                .setTitle(getString(R.string.login))
-                .setConfirmationRequired(false)
-                .build();
-        biometricPrompt.authenticate(new CancellationSignal(), executor, new BiometricPrompt.AuthenticationCallback() {
-            @Override
-            public void onAuthenticationSucceeded(BiometricPrompt.AuthenticationResult result) {
-                super.onAuthenticationSucceeded(result);
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
+        BiometricPrompt biometricPrompt;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            biometricPrompt = new BiometricPrompt.Builder(this)
+                    .setTitle(getString(R.string.login))
+                    .setConfirmationRequired(false)
+                    .setAllowedAuthenticators(BiometricManager.Authenticators.DEVICE_CREDENTIAL | BiometricManager.Authenticators.BIOMETRIC_WEAK)
+                    .build();
+        } else {
+            biometricPrompt = new BiometricPrompt.Builder(this)
+                    .setTitle(getString(R.string.login))
+                    .setConfirmationRequired(false)
+                    .setDeviceCredentialAllowed(true)
+                    .build();
+        }
+        if (biometricPrompt != null) {
+            biometricPrompt.authenticate(new CancellationSignal(), executor, new BiometricPrompt.AuthenticationCallback() {
+                @Override
+                public void onAuthenticationSucceeded(BiometricPrompt.AuthenticationResult result) {
+                    super.onAuthenticationSucceeded(result);
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            });
+        }
     }
 }

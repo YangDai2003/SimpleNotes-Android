@@ -49,33 +49,36 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * @author 30415
+ */
 public class NotesActivity extends AppCompatActivity {
     LinearLayout linearLayout;
     HorizontalScrollView scrollView;
-    EditText editText_title, editText_notes;
-    TextView textView_date;
+    EditText editTextTitle, editTextNotes;
+    TextView textViewDate;
     FloatingActionButton imageButton;
     private Notes notes;
     String images = "", dateStr;
     private List<String> paths = new ArrayList<>();
     private int imageId = 0, getImageId = 0;
-    private boolean is_old_note = false;
+    private boolean isOldNote = false;
     private Uri uri;
     ActivityResultLauncher<Intent> intentActivityResultLauncher, photoActivityResultLauncher;
 
     private void initView() {
         scrollView = findViewById(R.id.horizontalScrollView);
         linearLayout = findViewById(R.id.linear);
-        textView_date = findViewById(R.id.date);
-        editText_title = findViewById(R.id.edit_text_title);
-        editText_notes = findViewById(R.id.edit_text_notes);
+        textViewDate = findViewById(R.id.date);
+        editTextTitle = findViewById(R.id.edit_text_title);
+        editTextNotes = findViewById(R.id.edit_text_notes);
         imageButton = findViewById(R.id.imageButton);
     }
 
     private void initViewEvents() {
         imageButton.setOnClickListener(v -> {
-            editText_title.clearFocus();
-            editText_notes.clearFocus();
+            editTextTitle.clearFocus();
+            editTextNotes.clearFocus();
             Intent intent;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
@@ -98,14 +101,14 @@ public class NotesActivity extends AppCompatActivity {
     @Override
     public void finish() {
         super.finish();
-        this.overridePendingTransition(R.anim.stayout, R.anim.out);
+        overridePendingTransition(R.anim.stayout, R.anim.out);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.save_note) {
-            String title = editText_title.getText().toString();
-            String description = editText_notes.getText().toString();
+            String title = editTextTitle.getText().toString();
+            String description = editTextNotes.getText().toString();
             if (description.isEmpty()) {
                 Toast.makeText(NotesActivity.this, getString(R.string.toAdd), Toast.LENGTH_SHORT).show();
                 return false;
@@ -123,7 +126,7 @@ public class NotesActivity extends AppCompatActivity {
             setResult(Activity.RESULT_OK, intent);
             finish();
         } else if (item.getItemId() == android.R.id.home) {
-            if (!is_old_note) {
+            if (!isOldNote) {
                 for (int i = 0; i < paths.size(); ++i) {
                     deleteSingleFile(paths.get(i));
                 }
@@ -138,8 +141,8 @@ public class NotesActivity extends AppCompatActivity {
     private void openCalendar() {
         Intent intent = new Intent(Intent.ACTION_INSERT)
                 .setData(Uri.parse("content://com.android.calendar/events"))
-                .putExtra("title", editText_title.getText().toString())
-                .putExtra("description", editText_notes.getText().toString());
+                .putExtra("title", editTextTitle.getText().toString())
+                .putExtra("description", editTextNotes.getText().toString());
         startActivity(intent);
     }
 
@@ -176,8 +179,8 @@ public class NotesActivity extends AppCompatActivity {
                 if (result.getData() != null && result.getResultCode() == RESULT_OK) {
                     uri = result.getData().getData();
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
-                    String realPathFromURI = getRealPathFromURI(uri, this);
-                    bitmap = toTurn(decodeSampledBitmap(realPathFromURI), readPictureDegree(realPathFromURI));
+                    String realPathFromUri = getRealPathFromURI(uri, this);
+                    bitmap = toTurn(decodeSampledBitmap(realPathFromUri), readPictureDegree(realPathFromUri));
                     String path = fileSaveToInside(this, formatter.format(LocalDateTime.now()), bitmap);
                     paths.add(path);
                     runOnUiThread(() -> {
@@ -223,14 +226,14 @@ public class NotesActivity extends AppCompatActivity {
             }).start();
         });
 
-        is_old_note = true;
+        isOldNote = true;
         notes = new Notes();
         if (null != getIntent().getSerializableExtra("old_note")) {
             notes = (Notes) getIntent().getSerializableExtra("old_note");
-            editText_title.setText(notes.getTitle());
-            editText_notes.setText(notes.getNotes());
+            editTextTitle.setText(notes.getTitle());
+            editTextNotes.setText(notes.getNotes());
             dateStr = notes.getDate();
-            textView_date.setText(getString(R.string.create) + dateStr);
+            textViewDate.setText(getString(R.string.create) + dateStr);
             images = notes.getImage();
             if (!images.isEmpty()) {
                 List<String> listArr = Arrays.asList(images.trim().split(" "));
@@ -276,10 +279,10 @@ public class NotesActivity extends AppCompatActivity {
                 scrollView.setVisibility(View.GONE);
             }
         } else {
-            is_old_note = false;
+            isOldNote = false;
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, yyyy-MM-dd hh:mm a");
             dateStr = formatter.format(LocalDateTime.now());
-            textView_date.setText(getString(R.string.create) + dateStr);
+            textViewDate.setText(getString(R.string.create) + dateStr);
             scrollView.setVisibility(View.GONE);
         }
     }

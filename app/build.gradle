@@ -10,8 +10,8 @@ android {
         applicationId 'com.yangdai.notesapp'
         minSdk 29
         targetSdk 34
-        versionCode 8
-        versionName "8.0"
+        versionCode 10
+        versionName "2.0"
         resourceConfigurations += ["en", "de", "zh"]
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -41,7 +41,7 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.15.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.15.1'
 
-    def room_version = "2.5.1"
+    def room_version = '2.5.2'
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
 

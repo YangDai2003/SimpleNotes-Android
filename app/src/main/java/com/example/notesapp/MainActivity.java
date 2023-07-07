@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
             searchView.clearFocus();
             Intent intent = new Intent(this, SettingsActivity.class);
             intentActivityResultLauncher.launch(intent);
-            MainActivity.this.overridePendingTransition(R.anim.in, R.anim.stay);
+            overridePendingTransition(R.anim.in, R.anim.stay);
         } else if (item.getItemId() == R.id.filter_menu) {
             if (!filter) {
                 filterPin();
@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
             searchView.clearFocus();
             Intent intent = new Intent(this, NotesActivity.class);
             intentActivityResultLauncher1.launch(intent);
-            MainActivity.this.overridePendingTransition(R.anim.in, R.anim.stay);
+            overridePendingTransition(R.anim.in, R.anim.stay);
         });
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -240,23 +240,23 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
 
     private void filterStr(String newText) {
         List<Notes> filterList = new ArrayList<>();
-        for (Notes single_notes : notes) {
-            if (single_notes.getTitle().toLowerCase().contains(newText.toLowerCase())
-                    || single_notes.getNotes().toLowerCase().contains(newText.toLowerCase())) {
-                filterList.add(single_notes);
+        for (Notes singleNote : notes) {
+            if (singleNote.getTitle().toLowerCase().contains(newText.toLowerCase())
+                    || singleNote.getNotes().toLowerCase().contains(newText.toLowerCase())) {
+                filterList.add(singleNote);
             }
         }
         notesListAdapter.filteredList(filterList);
     }
 
     private void filterPin() {
-        List<Notes> filter_list = new ArrayList<>();
-        for (Notes single_notes : notes) {
-            if (single_notes.isPinned()) {
-                filter_list.add(single_notes);
+        List<Notes> filterList = new ArrayList<>();
+        for (Notes singleNote : notes) {
+            if (singleNote.isPinned()) {
+                filterList.add(singleNote);
             }
         }
-        notesListAdapter.filteredList(filter_list);
+        notesListAdapter.filteredList(filterList);
     }
 
     private void updateRecycler(List<Notes> notes) {
@@ -280,7 +280,7 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
             Intent intent = new Intent(MainActivity.this, NotesActivity.class);
             intent.putExtra("old_note", notes);
             intentActivityResultLauncher2.launch(intent);
-            MainActivity.this.overridePendingTransition(R.anim.in, R.anim.stay);
+            overridePendingTransition(R.anim.in, R.anim.stay);
         }
 
         @Override

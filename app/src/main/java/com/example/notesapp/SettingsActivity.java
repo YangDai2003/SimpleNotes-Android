@@ -19,6 +19,9 @@ import com.google.android.material.materialswitch.MaterialSwitch;
 import java.io.File;
 import java.util.Objects;
 
+/**
+ * @author 30415
+ */
 public class SettingsActivity extends AppCompatActivity {
     MaterialButton deleteAll, share, rate;
     MaterialSwitch materialSwitch;
@@ -35,7 +38,7 @@ public class SettingsActivity extends AppCompatActivity {
     public void finish() {
         setResult(RESULT_OK);
         super.finish();
-        this.overridePendingTransition(R.anim.stayout, R.anim.out);
+        overridePendingTransition(R.anim.stayout, R.anim.out);
     }
 
     @Override
