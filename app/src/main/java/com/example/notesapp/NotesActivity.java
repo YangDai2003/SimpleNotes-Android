@@ -230,7 +230,7 @@ public class NotesActivity extends AppCompatActivity {
         notes = new Notes();
         if (null != getIntent().getSerializableExtra("old_note")) {
             notes = (Notes) getIntent().getSerializableExtra("old_note");
-            editTextTitle.setText(notes.getTitle());
+            editTextTitle.setText(Objects.requireNonNull(notes).getTitle());
             editTextNotes.setText(notes.getNotes());
             dateStr = notes.getDate();
             textViewDate.setText(getString(R.string.create) + dateStr);
@@ -298,7 +298,7 @@ public class NotesActivity extends AppCompatActivity {
         Display display;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
             display = this.getDisplay();
-            display.getRealMetrics(metric);
+            Objects.requireNonNull(display).getRealMetrics(metric);
         } else {
             display = getWindowManager().getDefaultDisplay();
             display.getMetrics(metric);
