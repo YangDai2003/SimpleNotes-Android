@@ -103,5 +103,6 @@ public class SettingsActivity extends AppCompatActivity {
             }
         }
         fileOrDirectory.delete();
+
     }
 }
